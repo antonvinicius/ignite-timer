@@ -39,12 +39,14 @@ interface CyclesContextProviderProps {
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
+  const INITIAL_STATE = {
+    cycles: [],
+    activeCycleId: null,
+  }
+
   const [cyclesState, dispatch] = useReducer(
     cyclesReducer,
-    {
-      cycles: [],
-      activeCycleId: null,
-    },
+    INITIAL_STATE,
     () => {
       const storedStateAsJSON = localStorage.getItem(
         '@ignite-timer:cycles-state-1.0.0',
@@ -53,11 +55,13 @@ export function CyclesContextProvider({
       if (storedStateAsJSON) {
         return JSON.parse(storedStateAsJSON)
       }
+
+      return INITIAL_STATE
     },
   )
 
   const { cycles, activeCycleId } = cyclesState
-  const activeCycle = cycles.find((cycle: any) => cycle.id === activeCycleId)
+  const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(() => {
     if (activeCycle) {
